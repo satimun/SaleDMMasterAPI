@@ -28,26 +28,35 @@ namespace SALEDM_ADO.Mssql.Setup
         {
             DynamicParameters param = new DynamicParameters();
 
-            sql = " Select * from [sWorkprocessAdmin] where 1 = 1 ";
+            sql = " Select A.* ,A.Edit_userid + ' : ' + U.DETAIL Edit_userdetail  ";
+            sql += " from [sWorkprocessAdmin] A";
+            sql += " left outer join zUSER U on U.USER_ID = A.Edit_userid";
+            sql += "  where 1 = 1";
 
             if (d.wp_seq != null)
             {
-                sql += " wp_seq = " + d.wp_seq;
+                sql += " and wp_seq = " + d.wp_seq;
             }
 
             if (d.wpa_seq != null)
             {
-                sql += " wpa_seq = " + d.wpa_seq;
+                sql += " and wpa_seq = " + d.wpa_seq;
             }
 
             if (!String.IsNullOrEmpty(d.wpa_code))
             {
-                sql += " wpa_code = " + QuoteStr(d.wpa_code.Trim());
+                sql += " and wpa_code = " + QuoteStr(d.wpa_code.Trim());
             }
 
             if (!String.IsNullOrEmpty(d.wpa_desc))
             {
-                sql += " wpa_desc = " + QuoteStr(d.wpa_desc.Trim());
+                sql += " and wpa_desc = " + QuoteStr(d.wpa_desc.Trim());
+            }
+
+            if (!String.IsNullOrEmpty(d.search))
+            {
+                sql += " and ( wpa_code like " + QuoteStr("%" + d.search.Trim() + "%");
+                sql += " or wpa_desc like " + QuoteStr("%" + d.search.Trim() + "%") + ")";
             }
 
             var res = Query<sWorkprocessAdmin>(sql, param, conStr).ToList();

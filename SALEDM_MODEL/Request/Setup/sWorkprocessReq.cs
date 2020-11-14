@@ -15,5 +15,7 @@ namespace SALEDM_MODEL.Request.Setup
         public string wp_grp_desc { get; set; }
         public int? admin_seq { get; set; }
         public string Edit_userid { get; set; }
+        public string search { get; set; }
+        public int[] id { get; set; }
     }
 }

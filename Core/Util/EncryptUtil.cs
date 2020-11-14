@@ -72,41 +72,52 @@ namespace Core.Util
         }
 
         public static string ENDCodeNEW(string d)
-        {
-            string strInput = d.ToUpper();
+        {            
             string strOutput = "";
 
-            char[] charInput = strInput.ToCharArray();
-            char[] charOutput = new char[strInput.Length];
-
-            for (int i = 0; i < charInput.Length; i++)
+            if (!String.IsNullOrEmpty(d))
             {
+                string strInput = d.ToUpper();
 
-                charOutput[i] = Convert.ToChar((int)charInput[i] + 5);
+                char[] charInput = strInput.ToCharArray();
+                char[] charOutput = new char[strInput.Length];
+
+                for (int i = 0; i < charInput.Length; i++)
+                {
+
+                    charOutput[i] = Convert.ToChar((int)charInput[i] + 5);
+                }
+
+
+                strOutput = new string(charOutput);
             }
 
-
-            strOutput = new string(charOutput);
+            
 
             return strOutput;
         }
 
         public static string DECodeNEW(string d)
         {
-            string strInput = d.ToUpper();
             string strOutput = "";
 
-            char[] charInput = strInput.ToCharArray();
-            char[] charOutput = new char[strInput.Length];
-
-            for (int i = 0; i < charInput.Length; i++)
+            if (!String.IsNullOrEmpty(d))
             {
+                string strInput = d.ToUpper();
 
-                charOutput[i] = Convert.ToChar((int)charInput[i] - 5);
+                char[] charInput = strInput.ToCharArray();
+                char[] charOutput = new char[strInput.Length];
+
+                for (int i = 0; i < charInput.Length; i++)
+                {
+
+                    charOutput[i] = Convert.ToChar((int)charInput[i] - 5);
+                }
+
+
+                strOutput = new string(charOutput);
             }
-
-
-            strOutput = new string(charOutput);
+                
 
             return strOutput;
         }

@@ -28,26 +28,35 @@ namespace SALEDM_ADO.Mssql.Setup
         {
             DynamicParameters param = new DynamicParameters();            
 
-            sql = " Select * from [sWorkprocess] where 1 = 1";
+            sql = " Select A.* ,A.Edit_userid + ' : ' + U.DETAIL Edit_userdetail ";
+            sql += " from [sWorkprocess] A";
+            sql += " left outer join zUSER U on U.USER_ID = A.Edit_userid";
+            sql += "  where 1 = 1";
 
             if (d.admin_seq != null)
             {
-                sql += " admin_seq = " + d.admin_seq;
+                sql += " and admin_seq = " + d.admin_seq;
             }
 
             if (!String.IsNullOrEmpty(d.wp_code))
             {
-                sql += " wp_code = " + QuoteStr(d.wp_code.Trim());
+                sql += " and wp_code = " + QuoteStr(d.wp_code.Trim());
             }
 
             if (!String.IsNullOrEmpty(d.wp_desc))
             {
-                sql += " wp_desc = " + QuoteStr(d.wp_desc.Trim());
+                sql += " and wp_desc = " + QuoteStr(d.wp_desc.Trim());
             }
 
             if (d.wp_seq != null)
             {
-                sql += " wp_seq = " + d.wp_seq;
+                sql += " and wp_seq = " + d.wp_seq;
+            }
+
+            if (!String.IsNullOrEmpty(d.search))
+            {
+                sql += " and ( wp_code like " + QuoteStr("%" + d.search.Trim() + "%");
+                sql += " or wp_desc like " + QuoteStr("%" + d.search.Trim() + "%") + ")";
             }
 
             var res = Query<sWorkprocess>(sql, param, conStr).ToList();

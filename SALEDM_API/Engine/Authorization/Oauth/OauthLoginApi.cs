@@ -57,8 +57,7 @@ namespace SALEDM_API.Engine.Authorization.Oauth
                 res.BranCodeSt = obj.BranCodeSt;
                 res.ICQNO = obj.ICQNO;
                 res.EMAIL = obj.EMAIL;
-
-                
+                res.Expired_date = obj.Expired_date;
 
                 SALEDM_ADO.Mssql.Authorization.muTokenAdo.GetInstant().Insert(new SALEDM_MODEL.Data.Mssql.Authorization.muToken()
                 {

@@ -12,5 +12,6 @@ namespace SALEDM_MODEL.Data.Mssql.Setup
         public string Edit_userid { get; set; }
         public DateTime? Edit_date { get; set; }
         public DateTime? Edit_datetime { get; set; }
+        public string Edit_userdetail { get; set; }
     }
 }

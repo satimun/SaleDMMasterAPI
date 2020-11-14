@@ -28,21 +28,29 @@ namespace SALEDM_ADO.Mssql.Setup
         {
             DynamicParameters param = new DynamicParameters();
 
-            sql = " Select * from [sAdministrator] where 1 =1 ";
+            sql = " Select A.* ,A.Edit_userid + ' : ' + U.DETAIL Edit_userdetail ";
+            sql += " from [sAdministrator] A left outer join zUSER U on U.USER_ID = A.Edit_userid";
+            sql += "  where 1 =1";
 
             if (!String.IsNullOrEmpty(d.admin_code))
             {
-                sql += " admin_code = " + QuoteStr(d.admin_code.Trim());
+                sql += " and admin_code = " + QuoteStr(d.admin_code.Trim());
             }
 
             if (!String.IsNullOrEmpty(d.admin_desc))
             {
-                sql += " admin_desc = " + QuoteStr(d.admin_desc.Trim());
+                sql += " and admin_desc = " + QuoteStr(d.admin_desc.Trim() );
             }
 
             if(d.admin_seq != null)
             {
-                sql += " admin_seq = " + d.admin_seq;
+                sql += " and admin_seq = " + d.admin_seq;
+            }
+
+            if (!String.IsNullOrEmpty(d.search))
+            {
+                sql += " and ( admin_code like " + QuoteStr("%" + d.search.Trim() + "%");
+                sql += " or admin_desc like " + QuoteStr("%" + d.search.Trim() + "%") + ")";
             }
 
 

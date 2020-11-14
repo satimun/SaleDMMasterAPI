@@ -54,7 +54,7 @@ namespace SALEDM_API.Engine.Authorization.Oauth
                     res._result.ServerAddr = ConnectionString();
                     res._result.DBMode = DBMode;
 
-                    var users = SALEDM_ADO.Mssql.Setup.zUSERAdo.GetInstant().GetData(new SALEDM_MODEL.Request.Setup.zUSERReq() { USER_ID = dataReq.username.Trim(), MODE = "LOGIN" }, null, conString);
+                    var users = SALEDM_ADO.Mssql.Setup.zUSERAdo.GetInstant().GetData(new SALEDM_MODEL.Request.Setup.zUSERReq() { USER_ID = dataReq.username, MODE = "LOGIN" }, null, conString);
                     if (users == null) { throw new Exception("ไม่พบชื่อผู้ใช้งาน"); }
 
                     var Expired = users.Where(s => s.Expired_date < DateTime.Now)
@@ -63,9 +63,14 @@ namespace SALEDM_API.Engine.Authorization.Oauth
                     if (Expired.Count > 0) { throw new Exception("หมดอายุการใช้งาน ไม่มีสิทธิ์เข้าใช้โปรแกรม."); }
 
                     //var pass = Core.Util.EncryptUtil.Hash(dataReq.password.Trim());
-                    var pass = Core.Util.EncryptUtil.ENDCodeNEW(dataReq.password.Trim());
+                    var pass = !String.IsNullOrEmpty(dataReq.password) ? Core.Util.EncryptUtil.ENDCodeNEW(dataReq.password.Trim()): dataReq.password;
 
                    var user = users.FirstOrDefault();
+
+                    if (dataReq.username.Equals(dataReq.usercode))
+                    {
+                        pass = user.zPASSWORD;
+                    }
 
                     
                     if (user.zPASSWORD == pass)

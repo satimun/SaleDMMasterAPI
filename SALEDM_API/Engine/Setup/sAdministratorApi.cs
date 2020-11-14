@@ -32,20 +32,28 @@ namespace SALEDM_API.Engine.Setup
 
                 switch (mode)
                 {
-                    case "getdata":
+                    case "view":
                         res = getdata(dataReq, res, conString);
                         break;
 
-                    case "insert":
+                    case "add":
                         res = insert(dataReq, res, conString);
                         break;
 
-                    case "update":
+                    case "edit":
                         res = update(dataReq, res, conString);
                         break;
 
                     case "delete":
-                        res = delete(dataReq, res, conString);
+                        if (dataReq.id != null && dataReq.id.Length > 0)
+                        {
+                            res = deleteAll(dataReq, res, conString);
+                        }
+                        else
+                        {
+                            res = delete(dataReq, res, conString);
+                        }
+                        
                         break;
 
                     default:
@@ -94,7 +102,7 @@ namespace SALEDM_API.Engine.Setup
         private sAdministratorRes insert(sAdministratorReq dataReq, sAdministratorRes res, string conStr = null)
         {
             try
-            {
+            {     
                 sAdministratorReq req1 = new sAdministratorReq()
                 {
                     admin_code = dataReq.admin_code
@@ -107,7 +115,7 @@ namespace SALEDM_API.Engine.Setup
 
                 var state = SALEDM_ADO.Mssql.Setup.sAdministratorAdo.GetInstant().Insert(dataReq, null, conStr);
                 res._result._code = "200";
-                res._result._message = "บันทึกข้อมูลเรียบร้อยแล้ว";
+                res._result._message = "";
                 res._result._status = "OK";
             }
             catch(Exception ex)
@@ -141,7 +149,7 @@ namespace SALEDM_API.Engine.Setup
                 {
                     var state = SALEDM_ADO.Mssql.Setup.sAdministratorAdo.GetInstant().Update(dataReq, null, conStr);
                     res._result._code = "200";
-                    res._result._message = "บันทึกข้อมูลเรียบร้อยแล้ว";
+                    res._result._message = "";
                     res._result._status = "OK";
                 }
                 else
@@ -195,7 +203,7 @@ namespace SALEDM_API.Engine.Setup
                     {
                         var state = SALEDM_ADO.Mssql.Setup.sAdministratorAdo.GetInstant().Delete(dataReq, null, conStr);
                         res._result._code = "200";
-                        res._result._message = "ลบข้อมูลเรียบร้อยแล้ว";
+                        res._result._message = "";
                         res._result._status = "OK";
                     }
                         
@@ -206,6 +214,75 @@ namespace SALEDM_API.Engine.Setup
                     res._result._message = "ไม่พบข้อมูล";
                     res._result._status = "Not Found";
                 }
+
+
+            }
+            catch (Exception ex)
+            {
+                res._result._code = "500 ";
+                res._result._message = ex.Message;
+                res._result._status = "Internal Server Error";
+            }
+            finally
+            {
+                var lst = SALEDM_ADO.Mssql.Setup.sAdministratorAdo.GetInstant().GetData(dataReq, null, conStr);
+                res.Administrator = lst.FirstOrDefault();
+            }
+
+
+            return res;
+        }
+
+        private sAdministratorRes deleteAll(sAdministratorReq dataReq, sAdministratorRes res, string conStr = null)
+        {
+            try
+            {
+                string err = "";
+                foreach (int seq in dataReq.id)
+                {
+                    sAdministratorReq req1 = new sAdministratorReq()
+                    {
+                        admin_seq = seq
+                    };
+                    var lst1 = SALEDM_ADO.Mssql.Setup.sAdministratorAdo.GetInstant().GetData(req1, null, conStr);
+                    if (lst1 != null && lst1.Count > 0)
+                    {
+                        sWorkprocessReq req2 = new sWorkprocessReq()
+                        {
+                            admin_seq = seq
+                        };
+                        var lst2 = SALEDM_ADO.Mssql.Setup.sWorkprocessAdo.GetInstant().GetData(req2, null, conStr);
+                        if (lst2 != null && lst2.Count > 0)
+                        {
+                            err += " Function การทำงานในระบบนี้ถูกกำหนดรายละเอียดของการตรวจสอบสิทธิ์แล้ว";
+                        }
+                        else
+                        {
+                            var state = SALEDM_ADO.Mssql.Setup.sAdministratorAdo.GetInstant().Delete(req1, null, conStr);
+                        }
+
+                    }
+                    else
+                    {
+                        err += "ไม่พบข้อมูล ";
+                    }
+                }
+
+                if (String.IsNullOrEmpty(err))
+                {                    
+                    res._result._code = "200";
+                    res._result._message = "";
+                    res._result._status = "OK";
+
+                }
+                else
+                {
+                    res._result._code = "400";
+                    res._result._message = "ไม่สามารถลบข้อมูลได้ เนื่องจาก " + err;
+                    res._result._status = "Bad Request";
+                }
+
+                
 
 
             }

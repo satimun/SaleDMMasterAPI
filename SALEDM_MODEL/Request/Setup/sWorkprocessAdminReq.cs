@@ -14,5 +14,7 @@ namespace SALEDM_MODEL.Request.Setup
         public int? wpa_seq { get; set; }
         public int? wp_seq { get; set; }
         public string Edit_userid { get; set; }
+        public string search { get; set; }
+        public int[] id { get; set; }
     }
 }
